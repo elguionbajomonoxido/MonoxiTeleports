@@ -1,0 +1,31 @@
+name: MonoxiTeleports
+version: '0.1'
+main: mt.monoxido.MonoxiTeleports
+api-version: '1.19'
+authors: [Monoxido]
+description: Sistema de teleports avanzado para servidores de Minecraft
+
+commands:
+  mtp:
+    description: Comando principal para teletransportar jugadores
+    usage: /<command> <tpall|warp|warpall|back|gui|setwarp|delwarp|warps>
+    permission: monoxi.teleports.mtp
+    aliases: []
+
+permissions:
+  monoxi.teleports.mtp:
+    description: Permite usar el comando mtp
+    default: true
+  monoxi.teleports.setwarp:
+    description: Permite crear nuevos warps
+    default: op
+  monoxi.teleports.delwarp:
+    description: Permite eliminar warps existentes
+    default: op
+  monoxi.teleports.admin:
+    description: Otorga todos los permisos del plugin
+    default: op
+    children:
+      monoxi.teleports.mtp: true
+      monoxi.teleports.setwarp: true
+      monoxi.teleports.delwarp: true

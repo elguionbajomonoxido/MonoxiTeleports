@@ -1,0 +1,46 @@
+# Archivos de compilación
+target/
+*.jar
+*.class
+
+# Archivos de IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de logs
+logs/
+*.log
+
+# Archivos de configuración local
+config.yml
+
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+
+### Eclipse ###
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
