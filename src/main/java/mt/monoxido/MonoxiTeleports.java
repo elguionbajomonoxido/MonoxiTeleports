@@ -17,6 +17,7 @@ public final class MonoxiTeleports extends JavaPlugin {
 
     public MonoxiTeleports() {
         this.version = this.pdfFile.getVersion();
+        this.version2 = "0.2";
         this.prefix = ChatColor.GOLD + "[" + ChatColor.YELLOW + "MonoxiTeleports" + ChatColor.GOLD + "] " + ChatColor.RESET;
     }
 

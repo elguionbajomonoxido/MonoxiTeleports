@@ -1,7 +1,8 @@
+# @disable-formatting
 name: MonoxiTeleports
-version: '0.1'
+version: "0.2"
 main: mt.monoxido.MonoxiTeleports
-api-version: '1.19'
+api-version: "1.19"
 authors: [Monoxido]
 description: Sistema de teleports avanzado para servidores de Minecraft
 
