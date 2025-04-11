@@ -128,20 +128,15 @@ public class TeleportManager {
                     return;
                 }
                 
-                if (player.getWorld().getName().equals(warpLocation.getWorld().getName())) {
-                    storeLastLocation(player);
-                    
-                    // Aplicar efectos visuales si están disponibles
-                    if (teleportEffects != null) {
-                        teleportEffects.playTeleportEffects(player, warpLocation);
-                    }
-                    
-                    player.teleport(warpLocation);
-                    player.sendMessage("Te has teletransportado a " + warpName + ".");
-                } else {
-                    player.sendMessage("Este warp está en otro mundo.");
-                    throw new IllegalArgumentException("El warp está en un mundo diferente al del jugador");
+                storeLastLocation(player);
+                
+                // Aplicar efectos visuales si están disponibles
+                if (teleportEffects != null) {
+                    teleportEffects.playTeleportEffects(player, warpLocation);
                 }
+                
+                player.teleport(warpLocation);
+                player.sendMessage("Te has teletransportado a " + warpName + ".");
             } else {
                 player.sendMessage("No existe un warp con ese nombre.");
                 throw new IllegalArgumentException("El warp especificado no existe: " + warpName);
@@ -183,37 +178,31 @@ public class TeleportManager {
                     return;
                 }
                 
-                if (player.getWorld().getName().equals(warpLocation.getWorld().getName())) {
-                    List<Player> playersToTeleport = new ArrayList<>();
-                    
-                    for (Player targetPlayer : Bukkit.getOnlinePlayers()) {
-                        if (targetPlayer.getWorld().getName().equals(player.getWorld().getName())) {
-                            playersToTeleport.add(targetPlayer);
-                        }
+                List<Player> playersToTeleport = new ArrayList<>();
+                
+                // Incluir a todos los jugadores en línea, sin importar el mundo
+                for (Player targetPlayer : Bukkit.getOnlinePlayers()) {
+                    playersToTeleport.add(targetPlayer);
+                }
+                
+                if (playersToTeleport.isEmpty()) {
+                    player.sendMessage("No hay jugadores para teletransportar.");
+                    return;
+                }
+                
+                player.sendMessage("Iniciando teletransporte de " + playersToTeleport.size() + " jugadores a " + warpName + "...");
+                
+                // Si hay pocos jugadores, teleportar directamente
+                if (playersToTeleport.size() <= MAX_SIMULTANEOUS_TELEPORTS) {
+                    for (Player targetPlayer : playersToTeleport) {
+                        teleportPlayerTo(targetPlayer, warpLocation);
+                        targetPlayer.sendMessage(player.getName() + " te ha teletransportado a " + warpName + ".");
                     }
-                    
-                    if (playersToTeleport.isEmpty()) {
-                        player.sendMessage("No hay jugadores en tu mismo mundo para teletransportar.");
-                        return;
-                    }
-                    
-                    player.sendMessage("Iniciando teletransporte de " + playersToTeleport.size() + " jugadores a " + warpName + "...");
-                    
-                    // Si hay pocos jugadores, teleportar directamente
-                    if (playersToTeleport.size() <= MAX_SIMULTANEOUS_TELEPORTS) {
-                        for (Player targetPlayer : playersToTeleport) {
-                            teleportPlayerTo(targetPlayer, warpLocation);
-                            targetPlayer.sendMessage(player.getName() + " te ha teletransportado a " + warpName + ".");
-                        }
-                        player.sendMessage("Has teleportado a todos a " + warpName + ".");
-                    } else {
-                        // Teleportar en lotes para prevenir lag
-                        batchTeleport(playersToTeleport, warpLocation, 
-                                player.getName() + " te ha teletransportado a " + warpName + ".", player);
-                    }
+                    player.sendMessage("Has teleportado a todos a " + warpName + ".");
                 } else {
-                    player.sendMessage("Este warp está en otro mundo.");
-                    throw new IllegalArgumentException("El warp está en un mundo diferente al del jugador");
+                    // Teleportar en lotes para prevenir lag
+                    batchTeleport(playersToTeleport, warpLocation, 
+                            player.getName() + " te ha teletransportado a " + warpName + ".", player);
                 }
             } else {
                 player.sendMessage("No existe un warp con ese nombre.");
