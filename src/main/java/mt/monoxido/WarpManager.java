@@ -1,12 +1,12 @@
 package mt.monoxido;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.ChatColor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +21,7 @@ public class WarpManager {
     private final Map<String, Location> warps = new HashMap<>();
     private final JavaPlugin plugin;
     private final String prefix;
+    private Location spawnLocation;
     
     /** Caché para los warps más utilizados */
     private final Map<String, CachedWarp> warpCache = new HashMap<>();
@@ -57,6 +58,7 @@ public class WarpManager {
                         double z = config.getDouble("warps." + warpName + ".z");
                         
                         if (worldName == null || Bukkit.getWorld(worldName) == null) {
+                            // Agregar colores a los mensajes del logger
                             plugin.getLogger().warning(prefix + ChatColor.RED + "No se pudo cargar el warp " + warpName + ": mundo no encontrado");
                             continue;
                         }
@@ -300,4 +302,36 @@ public class WarpManager {
             useCount++;
         }
     }
-} 
+
+    public void setSpawn(Location location) {
+        this.spawnLocation = location;
+        FileConfiguration config = plugin.getConfig();
+        config.set("spawn.world", location.getWorld().getName());
+        config.set("spawn.x", location.getX());
+        config.set("spawn.y", location.getY());
+        config.set("spawn.z", location.getZ());
+        config.set("spawn.yaw", location.getYaw());
+        config.set("spawn.pitch", location.getPitch());
+        plugin.saveConfig();
+    }
+
+    public Location getSpawn() {
+        if (spawnLocation == null) {
+            FileConfiguration config = plugin.getConfig();
+            String worldName = config.getString("spawn.world");
+            if (worldName != null && Bukkit.getWorld(worldName) != null) {
+                spawnLocation = new Location(
+                    Bukkit.getWorld(worldName),
+                    config.getDouble("spawn.x"),
+                    config.getDouble("spawn.y"),
+                    config.getDouble("spawn.z"),
+                    (float) config.getDouble("spawn.yaw"),
+                    (float) config.getDouble("spawn.pitch")
+                );
+            } else {
+                plugin.getLogger().warning("El mundo especificado para el spawn no existe o no está cargado.");
+            }
+        }
+        return spawnLocation;
+    }
+}

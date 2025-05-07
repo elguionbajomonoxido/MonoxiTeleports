@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -26,10 +27,10 @@ public class TeleportEffects {
      * 
      * @param plugin La instancia principal del plugin
      */
-    public TeleportEffects(JavaPlugin plugin) {
+    public TeleportEffects(JavaPlugin plugin, FileConfiguration config) {
         this.plugin = plugin;
-        this.enableEffects = true;
-        this.enableSounds = true;
+        this.enableEffects = config.getBoolean("effects.enable_particles", true);
+        this.enableSounds = config.getBoolean("effects.enable_sounds", true);
     }
 
     /**
@@ -189,4 +190,4 @@ public class TeleportEffects {
             }.runTaskLater(plugin, 2L);
         }
     }
-} 
+}

@@ -1,32 +1,88 @@
 # @disable-formatting
 name: MonoxiTeleports
-version: "0.2"
+version: "0.4"
 main: mt.monoxido.MonoxiTeleports
 api-version: "1.19"
 authors: [Monoxido]
 description: Sistema de teleports avanzado para servidores de Minecraft
 
 commands:
+  tpall:
+    description: "Teletransporta a todos los jugadores hacia ti"
+    usage: "/tpall"
+    permission: monoxi.teleports.tpall
+  warp:
+    description: "Teletransporta a un warp específico"
+    usage: "/warp <nombre>"
+    permission: monoxi.teleports.warp
+  warpall:
+    description: "Teletransporta a todos los jugadores a un warp específico"
+    usage: "/warpall <nombre>"
+    permission: monoxi.teleports.warpall
+  back:
+    description: "Teletransporta al jugador a su última ubicación"
+    usage: "/back"
+    permission: monoxi.teleports.back
+  setwarp:
+    description: "Crea un nuevo warp"
+    usage: "/setwarp <nombre>"
+    permission: monoxi.teleports.setwarp
+  delwarp:
+    description: "Elimina un warp existente"
+    usage: "/delwarp <nombre>"
+    permission: monoxi.teleports.delwarp
+  warps:
+    description: "Lista todos los warps disponibles"
+    usage: "/warps"
+    permission: monoxi.teleports.warps
   mtp:
-    description: Comando principal para teletransportar jugadores
-    usage: /<command> <tpall|warp|warpall|back|gui|setwarp|delwarp|warps>
-    permission: monoxi.teleports.mtp
-    aliases: []
+    description: "Recarga la configuración del plugin"
+    usage: "/mtp reload"
+    permission: monoxi.teleports.reload
+  setspawn:
+    description: "Establece la ubicación del spawn"
+    usage: "/setspawn"
+    permission: monoxi.teleports.setspawn
+  spawn:
+    description: "Teletransporta al jugador al spawn"
+    usage: "/spawn"
+    permission: monoxi.teleports.spawn
+  spawnall:
+    description: "Teletransporta a todos los jugadores al spawn"
+    usage: "/spawnall"
+    permission: monoxi.teleports.spawnall
 
 permissions:
-  monoxi.teleports.mtp:
-    description: Permite usar el comando mtp
+  monoxi.teleports.tpall:
+    description: "Permite usar el comando tpall"
+    default: true
+  monoxi.teleports.warp:
+    description: "Permite usar el comando warp"
+    default: true
+  monoxi.teleports.warpall:
+    description: "Permite usar el comando warpall"
+    default: true
+  monoxi.teleports.back:
+    description: "Permite usar el comando back"
     default: true
   monoxi.teleports.setwarp:
-    description: Permite crear nuevos warps
+    description: "Permite usar el comando setwarp"
     default: op
   monoxi.teleports.delwarp:
-    description: Permite eliminar warps existentes
+    description: "Permite usar el comando delwarp"
     default: op
-  monoxi.teleports.admin:
-    description: Otorga todos los permisos del plugin
+  monoxi.teleports.warps:
+    description: "Permite usar el comando warps"
+    default: true
+  monoxi.teleports.reload:
+    description: "Permite recargar la configuración del plugin"
     default: op
-    children:
-      monoxi.teleports.mtp: true
-      monoxi.teleports.setwarp: true
-      monoxi.teleports.delwarp: true
+  monoxi.teleports.setspawn:
+    description: "Permite usar el comando setspawn"
+    default: op
+  monoxi.teleports.spawn:
+    description: "Permite usar el comando spawn"
+    default: true
+  monoxi.teleports.spawnall:
+    description: "Permite usar el comando spawnall"
+    default: op

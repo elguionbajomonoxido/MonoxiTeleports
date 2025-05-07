@@ -1,10 +1,13 @@
 package mt.monoxido;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,11 +32,10 @@ public class TeleportManager {
     private final TeleportEffects teleportEffects;
     /** JavaPlugin principal */
     private final JavaPlugin plugin;
-    /** Número máximo de jugadores a teletransportar simultáneamente para prevenir lag */
-    private static final int MAX_SIMULTANEOUS_TELEPORTS = 5;
-    /** Retraso entre lotes de teletransportes para prevenir lag (en ticks) */
-    private static final int TELEPORT_BATCH_DELAY = 5;
-
+    private final int maxSimultaneousTeleports;
+    private final int teleportBatchDelay;
+    // Agregar el prefijo para los mensajes
+    private static final String prefix = ChatColor.GOLD + "[" + ChatColor.YELLOW + "MonoxiTeleports" + ChatColor.GOLD + "] ";
     /**
      * Construye un nuevo gestor de teletransportes.
      *
@@ -44,6 +46,8 @@ public class TeleportManager {
         this.logger = Bukkit.getLogger();
         this.plugin = null;
         this.teleportEffects = null;
+        this.maxSimultaneousTeleports = 5;
+        this.teleportBatchDelay = 5;
     }
 
     /**
@@ -53,11 +57,13 @@ public class TeleportManager {
      * @param plugin Plugin desde el cual obtener el logger
      * @param teleportEffects Gestor de efectos visuales
      */
-    public TeleportManager(WarpManager warpManager, JavaPlugin plugin, TeleportEffects teleportEffects) {
+    public TeleportManager(WarpManager warpManager, JavaPlugin plugin, TeleportEffects teleportEffects, FileConfiguration config) {
         this.warpManager = warpManager;
         this.plugin = plugin;
         this.logger = plugin.getLogger();
         this.teleportEffects = teleportEffects;
+        this.maxSimultaneousTeleports = config.getInt("performance.max_simultaneous_teleports", 5);
+        this.teleportBatchDelay = config.getInt("performance.teleport_batch_delay", 5);
     }
 
     /**
@@ -83,15 +89,15 @@ public class TeleportManager {
                 }
             }
             
-            player.sendMessage("Iniciando teletransporte de " + playersToTeleport.size() + " jugadores hacia ti...");
+            player.sendMessage(prefix + ChatColor.GREEN + "Iniciando teletransporte de " + ChatColor.YELLOW + playersToTeleport.size() + ChatColor.GREEN + " jugadores hacia ti...");
             
             // Si hay pocos jugadores, teleportar directamente
-            if (playersToTeleport.size() <= MAX_SIMULTANEOUS_TELEPORTS) {
+            if (playersToTeleport.size() <= maxSimultaneousTeleports) {
                 for (Player targetPlayer : playersToTeleport) {
                     teleportPlayerTo(targetPlayer, targetLocation);
                     targetPlayer.sendMessage(player.getName() + " te ha teletransportado hacia él.");
                 }
-                player.sendMessage("Has teleportado a todos hacia ti.");
+                player.sendMessage(prefix + ChatColor.GREEN + "Has teleportado a todos hacia ti.");
             } else {
                 // Teleportar en lotes para prevenir lag
                 batchTeleport(playersToTeleport, targetLocation, player.getName() + " te ha teletransportado hacia él.", player);
@@ -136,9 +142,9 @@ public class TeleportManager {
                 }
                 
                 player.teleport(warpLocation);
-                player.sendMessage("Te has teletransportado a " + warpName + ".");
+                player.sendMessage(prefix + ChatColor.GREEN + "Te has teletransportado a " + ChatColor.YELLOW + warpName + ChatColor.GREEN + ".");
             } else {
-                player.sendMessage("No existe un warp con ese nombre.");
+                player.sendMessage(prefix + ChatColor.RED + "No existe un warp con ese nombre.");
                 throw new IllegalArgumentException("El warp especificado no existe: " + warpName);
             }
         } catch (IllegalArgumentException e) {
@@ -190,15 +196,15 @@ public class TeleportManager {
                     return;
                 }
                 
-                player.sendMessage("Iniciando teletransporte de " + playersToTeleport.size() + " jugadores a " + warpName + "...");
+                player.sendMessage(prefix + ChatColor.GREEN + "Iniciando teletransporte de " + ChatColor.YELLOW + playersToTeleport.size() + ChatColor.GREEN + " jugadores a " + ChatColor.YELLOW + warpName + ChatColor.GREEN + "...");
                 
                 // Si hay pocos jugadores, teleportar directamente
-                if (playersToTeleport.size() <= MAX_SIMULTANEOUS_TELEPORTS) {
+                if (playersToTeleport.size() <= maxSimultaneousTeleports) {
                     for (Player targetPlayer : playersToTeleport) {
                         teleportPlayerTo(targetPlayer, warpLocation);
                         targetPlayer.sendMessage(player.getName() + " te ha teletransportado a " + warpName + ".");
                     }
-                    player.sendMessage("Has teleportado a todos a " + warpName + ".");
+                    player.sendMessage(prefix + ChatColor.GREEN + "Has teleportado a todos a " + ChatColor.YELLOW + warpName + ChatColor.GREEN + ".");
                 } else {
                     // Teleportar en lotes para prevenir lag
                     batchTeleport(playersToTeleport, warpLocation, 
@@ -251,9 +257,9 @@ public class TeleportManager {
                 // Actualizar la última ubicación para poder volver a la posición actual
                 lastLocation.put(player, currentLocation);
                 
-                player.sendMessage("Te has teletransportado de vuelta a tu última ubicación.");
+                player.sendMessage(prefix + ChatColor.GREEN + "Te has teletransportado de vuelta a tu última ubicación.");
             } else {
-                player.sendMessage("No tienes una ubicación registrada para retornar.");
+                player.sendMessage(prefix + ChatColor.RED + "No tienes una ubicación registrada para retornar.");
                 throw new IllegalStateException("No hay ubicación previa registrada para el jugador");
             }
         } catch (IllegalStateException e) {
@@ -262,7 +268,7 @@ public class TeleportManager {
             throw e;
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error al teletransportar de vuelta al jugador", e);
-            player.sendMessage("Error al teletransportarte de vuelta: " + e.getMessage());
+            player.sendMessage(prefix + "Error al teletransportarte de vuelta: " + e.getMessage());
             throw new IllegalStateException("Error al teletransportar al jugador a su ubicación anterior", e);
         }
     }
@@ -323,18 +329,8 @@ public class TeleportManager {
      * @param initiator Jugador que inició el teletransporte
      */
     private void batchTeleport(List<Player> players, Location destination, String message, Player initiator) {
-        if (plugin == null) {
-            // Si no hay plugin, teleportar directamente (menos seguro)
-            for (Player player : players) {
-                teleportPlayerTo(player, destination);
-                player.sendMessage(message);
-            }
-            initiator.sendMessage("Teletransporte masivo completado.");
-            return;
-        }
-        
         final int totalPlayers = players.size();
-        final int batches = (int) Math.ceil((double) totalPlayers / MAX_SIMULTANEOUS_TELEPORTS);
+        final int batches = (int) Math.ceil((double) totalPlayers / maxSimultaneousTeleports);
         
         new BukkitRunnable() {
             int currentBatch = 0;
@@ -348,8 +344,8 @@ public class TeleportManager {
                     return;
                 }
                 
-                int start = currentBatch * MAX_SIMULTANEOUS_TELEPORTS;
-                int end = Math.min(start + MAX_SIMULTANEOUS_TELEPORTS, totalPlayers);
+                int start = currentBatch * maxSimultaneousTeleports;
+                int end = Math.min(start + maxSimultaneousTeleports, totalPlayers);
                 
                 for (int i = start; i < end; i++) {
                     Player player = players.get(i);
@@ -363,6 +359,29 @@ public class TeleportManager {
                 currentBatch++;
                 initiator.sendMessage("Teletransporte: " + processed + "/" + totalPlayers + " jugadores procesados...");
             }
-        }.runTaskTimer(plugin, 0L, TELEPORT_BATCH_DELAY);
+        }.runTaskTimer(plugin, 0L, teleportBatchDelay);
     }
-} 
+
+    public void teleportToSpawn(Player player) {
+        Location spawn = warpManager.getSpawn();
+        if (spawn != null) {
+            player.teleport(spawn);
+            player.sendMessage(prefix + ChatColor.GREEN + "Teletransportado al spawn.");
+        } else {
+            player.sendMessage(prefix + ChatColor.RED + "El spawn no está configurado.");
+        }
+    }
+
+    public void teleportAllToSpawn(CommandSender sender) {
+        Location spawn = warpManager.getSpawn();
+        if (spawn != null) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.teleport(spawn);
+                player.sendMessage(prefix + ChatColor.GREEN + "Has sido teletransportado al spawn por " + sender.getName() + ".");
+            }
+            sender.sendMessage(prefix + ChatColor.GREEN + "Todos los jugadores han sido teletransportados al spawn.");
+        } else {
+            sender.sendMessage(prefix + ChatColor.RED + "El spawn no está configurado.");
+        }
+    }
+}
