@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>mt.monoxido</groupId>
-    <artifactId>MonoxiTeleports</artifactId>
-    <version>0.4</version>
+    <artifactId>MonoxiEssentials</artifactId>
+    <version>0.5</version>
     <packaging>jar</packaging>
 
     <name>MonoxiTeleports</name>
@@ -92,7 +92,13 @@
             <artifactId>exp4j</artifactId>
             <version>0.4.8</version>
         </dependency>
-        
+        <dependency>
+            <groupId>com.discordsrv</groupId>
+            <artifactId>discordsrv</artifactId>
+            <version>1.26.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Dependencias para pruebas -->
         <dependency>
             <groupId>junit</groupId>

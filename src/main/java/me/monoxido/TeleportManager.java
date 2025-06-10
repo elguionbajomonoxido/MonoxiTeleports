@@ -1,4 +1,4 @@
-package mt.monoxido;
+package me.monoxido;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,7 +35,7 @@ public class TeleportManager {
     private final int maxSimultaneousTeleports;
     private final int teleportBatchDelay;
     // Agregar el prefijo para los mensajes
-    private static final String prefix = ChatColor.GOLD + "[" + ChatColor.YELLOW + "MonoxiTeleports" + ChatColor.GOLD + "] ";
+    private static final String prefix = ChatColor.GOLD + "[" + ChatColor.YELLOW + "MonoxiEssentials" + ChatColor.GOLD + "] " + ChatColor.WHITE;
     /**
      * Construye un nuevo gestor de teletransportes.
      *
@@ -77,20 +77,18 @@ public class TeleportManager {
         if (player == null) {
             throw new IllegalArgumentException("El jugador no puede ser nulo");
         }
-        
+
         try {
             final Location targetLocation = player.getLocation();
             List<Player> playersToTeleport = new ArrayList<>();
-            
+
             // Construir lista de jugadores a teletransportar, excluyendo al que ejecuta el comando
             for (Player targetPlayer : Bukkit.getOnlinePlayers()) {
                 if (!targetPlayer.equals(player)) {
                     playersToTeleport.add(targetPlayer);
                 }
             }
-            
-            player.sendMessage(prefix + ChatColor.GREEN + "Iniciando teletransporte de " + ChatColor.YELLOW + playersToTeleport.size() + ChatColor.GREEN + " jugadores hacia ti...");
-            
+
             // Si hay pocos jugadores, teleportar directamente
             if (playersToTeleport.size() <= maxSimultaneousTeleports) {
                 for (Player targetPlayer : playersToTeleport) {
@@ -120,27 +118,27 @@ public class TeleportManager {
         if (player == null) {
             throw new IllegalArgumentException("El jugador no puede ser nulo");
         }
-        
+
         if (warpName == null || warpName.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del warp no puede estar vacío");
         }
-        
+
         try {
             if (warpManager.warpExists(warpName)) {
                 Location warpLocation = warpManager.getWarpLocation(warpName);
-                
+
                 if (warpLocation == null || warpLocation.getWorld() == null) {
                     player.sendMessage("El warp existe pero su ubicación es inválida.");
                     return;
                 }
-                
+
                 storeLastLocation(player);
-                
+
                 // Aplicar efectos visuales si están disponibles
                 if (teleportEffects != null) {
                     teleportEffects.playTeleportEffects(player, warpLocation);
                 }
-                
+
                 player.teleport(warpLocation);
                 player.sendMessage(prefix + ChatColor.GREEN + "Te has teletransportado a " + ChatColor.YELLOW + warpName + ChatColor.GREEN + ".");
             } else {
@@ -170,34 +168,32 @@ public class TeleportManager {
         if (player == null) {
             throw new IllegalArgumentException("El jugador no puede ser nulo");
         }
-        
+
         if (warpName == null || warpName.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del warp no puede estar vacío");
         }
-        
+
         try {
             if (warpManager.warpExists(warpName)) {
                 final Location warpLocation = warpManager.getWarpLocation(warpName);
-                
+
                 if (warpLocation == null || warpLocation.getWorld() == null) {
                     player.sendMessage("El warp existe pero su ubicación es inválida.");
                     return;
                 }
-                
+
                 List<Player> playersToTeleport = new ArrayList<>();
-                
+
                 // Incluir a todos los jugadores en línea, sin importar el mundo
                 for (Player targetPlayer : Bukkit.getOnlinePlayers()) {
                     playersToTeleport.add(targetPlayer);
                 }
-                
+
                 if (playersToTeleport.isEmpty()) {
                     player.sendMessage("No hay jugadores para teletransportar.");
                     return;
                 }
-                
-                player.sendMessage(prefix + ChatColor.GREEN + "Iniciando teletransporte de " + ChatColor.YELLOW + playersToTeleport.size() + ChatColor.GREEN + " jugadores a " + ChatColor.YELLOW + warpName + ChatColor.GREEN + "...");
-                
+
                 // Si hay pocos jugadores, teleportar directamente
                 if (playersToTeleport.size() <= maxSimultaneousTeleports) {
                     for (Player targetPlayer : playersToTeleport) {
@@ -207,7 +203,7 @@ public class TeleportManager {
                     player.sendMessage(prefix + ChatColor.GREEN + "Has teleportado a todos a " + ChatColor.YELLOW + warpName + ChatColor.GREEN + ".");
                 } else {
                     // Teleportar en lotes para prevenir lag
-                    batchTeleport(playersToTeleport, warpLocation, 
+                    batchTeleport(playersToTeleport, warpLocation,
                             player.getName() + " te ha teletransportado a " + warpName + ".", player);
                 }
             } else {
@@ -235,7 +231,7 @@ public class TeleportManager {
         if (player == null) {
             throw new IllegalArgumentException("El jugador no puede ser nulo");
         }
-        
+
         try {
             Location lastLoc = lastLocation.get(player);
             if (lastLoc != null) {
@@ -243,20 +239,20 @@ public class TeleportManager {
                     player.sendMessage("Tu ubicación anterior es inválida.");
                     return;
                 }
-                
+
                 // Guardar ubicación actual antes de teletransportar de vuelta
                 Location currentLocation = player.getLocation();
-                
+
                 // Aplicar efectos visuales si están disponibles
                 if (teleportEffects != null) {
                     teleportEffects.playTeleportEffects(player, lastLoc);
                 }
-                
+
                 player.teleport(lastLoc);
-                
+
                 // Actualizar la última ubicación para poder volver a la posición actual
                 lastLocation.put(player, currentLocation);
-                
+
                 player.sendMessage(prefix + ChatColor.GREEN + "Te has teletransportado de vuelta a tu última ubicación.");
             } else {
                 player.sendMessage(prefix + ChatColor.RED + "No tienes una ubicación registrada para retornar.");
@@ -274,7 +270,7 @@ public class TeleportManager {
     }
 
     /**
-     * Guarda la ubicación actual del jugador para futuros comandos "back".
+     * Guarda la ubicación actual del jugador para futuros comandos "back" y para offline (/tpo).
      *
      * @param player Jugador cuya ubicación se guardará
      */
@@ -282,14 +278,25 @@ public class TeleportManager {
         if (player == null) {
             throw new IllegalArgumentException("El jugador no puede ser nulo");
         }
-        
+
         try {
             lastLocation.put(player, player.getLocation());
+            // Guardar en config para soporte offline
+            FileConfiguration config = plugin.getConfig();
+            String path = "lastlocations." + player.getName().toLowerCase();
+            Location loc = player.getLocation();
+            config.set(path + ".world", loc.getWorld().getName());
+            config.set(path + ".x", loc.getX());
+            config.set(path + ".y", loc.getY());
+            config.set(path + ".z", loc.getZ());
+            config.set(path + ".yaw", loc.getYaw());
+            config.set(path + ".pitch", loc.getPitch());
+            plugin.saveConfig();
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error al guardar la ubicación del jugador", e);
         }
     }
-    
+
     /**
      * Limpia la última ubicación guardada para un jugador.
      * Útil cuando un jugador se desconecta para liberar memoria.
@@ -300,10 +307,10 @@ public class TeleportManager {
         if (player == null) {
             return;
         }
-        
+
         lastLocation.remove(player);
     }
-    
+
     /**
      * Teletransporta a un jugador a una ubicación específica con efectos.
      *
@@ -312,14 +319,14 @@ public class TeleportManager {
      */
     private void teleportPlayerTo(Player player, Location location) {
         storeLastLocation(player);
-        
+
         if (teleportEffects != null) {
             teleportEffects.playLightweightTeleportEffects(player, location);
         }
-        
+
         player.teleport(location);
     }
-    
+
     /**
      * Teletransporta jugadores en lotes para evitar lag en el servidor.
      *
@@ -331,11 +338,11 @@ public class TeleportManager {
     private void batchTeleport(List<Player> players, Location destination, String message, Player initiator) {
         final int totalPlayers = players.size();
         final int batches = (int) Math.ceil((double) totalPlayers / maxSimultaneousTeleports);
-        
+
         new BukkitRunnable() {
             int currentBatch = 0;
             int processed = 0;
-            
+
             @Override
             public void run() {
                 if (currentBatch >= batches) {
@@ -343,10 +350,10 @@ public class TeleportManager {
                     this.cancel();
                     return;
                 }
-                
+
                 int start = currentBatch * maxSimultaneousTeleports;
                 int end = Math.min(start + maxSimultaneousTeleports, totalPlayers);
-                
+
                 for (int i = start; i < end; i++) {
                     Player player = players.get(i);
                     if (player.isOnline()) {
@@ -355,7 +362,7 @@ public class TeleportManager {
                         processed++;
                     }
                 }
-                
+
                 currentBatch++;
                 initiator.sendMessage("Teletransporte: " + processed + "/" + totalPlayers + " jugadores procesados...");
             }

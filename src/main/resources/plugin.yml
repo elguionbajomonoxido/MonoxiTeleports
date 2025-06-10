@@ -1,70 +1,149 @@
 # @disable-formatting
-name: MonoxiTeleports
-version: "0.4"
-main: mt.monoxido.MonoxiTeleports
+name: MonoxiEssentials
+version: "0.5"
+main: me.monoxido.MonoxiEssentials
 api-version: "1.19"
 authors: [Monoxido]
-description: Sistema de teleports avanzado para servidores de Minecraft
+description: Sistema de essentials para Minecraft con teletransportes, warps y más.
 
 commands:
   tpall:
     description: "Teletransporta a todos los jugadores hacia ti"
     usage: "/tpall"
-    permission: monoxi.teleports.tpall
   warp:
     description: "Teletransporta a un warp específico"
     usage: "/warp <nombre>"
-    permission: monoxi.teleports.warp
   warpall:
     description: "Teletransporta a todos los jugadores a un warp específico"
     usage: "/warpall <nombre>"
-    permission: monoxi.teleports.warpall
   back:
     description: "Teletransporta al jugador a su última ubicación"
     usage: "/back"
-    permission: monoxi.teleports.back
   setwarp:
     description: "Crea un nuevo warp"
     usage: "/setwarp <nombre>"
-    permission: monoxi.teleports.setwarp
   delwarp:
     description: "Elimina un warp existente"
     usage: "/delwarp <nombre>"
-    permission: monoxi.teleports.delwarp
   warps:
     description: "Lista todos los warps disponibles"
     usage: "/warps"
-    permission: monoxi.teleports.warps
-  mtp:
-    description: "Recarga la configuración del plugin"
-    usage: "/mtp reload"
-    permission: monoxi.teleports.reload
+  heal:
+    description: "Cura al jugador"
+    usage: "/heal [jugador|all]"
+  feed:
+    description: "Alimenta al jugador"
+    usage: "/feed [jugador|all]"
+  gamemode:
+    description: "Cambia el modo de juego"
+    usage: "/gamemode <modo> [jugador]"
+  gm:
+    description: "Alias de gamemode"
+    usage: "/gm <modo> [jugador]"
+  fly:
+    description: "Activa/desactiva el vuelo"
+    usage: "/fly [jugador]"
+  flyspeed:
+    description: "Cambia la velocidad de vuelo"
+    usage: "/flyspeed <1-10> [jugador]"
+  god:
+    description: "Activa/desactiva modo dios"
+    usage: "/god [jugador]"
+  day:
+    description: "Cambia a día"
+    usage: "/day"
+  night:
+    description: "Cambia a noche"
+    usage: "/night"
+  weather:
+    description: "Cambia el clima"
+    usage: "/weather <clear|rain|storm>"
+  speed:
+    description: "Cambia la velocidad"
+    usage: "/speed <1-10> [jugador]"
+  tp:
+    description: "Teletransporta jugadores"
+    usage: "/tp <jugador> [jugador2]"
+  hat:
+    description: "Pone el objeto en la cabeza"
+    usage: "/hat [jugador]"
+  sudo:
+    description: "Fuerza a un jugador a ejecutar un comando"
+    usage: "/sudo <jugador> <comando>"
+  vanish:
+    description: "Activa/desactiva vanish"
+    usage: "/vanish [jugador]"
+  mutechat:
+    description: "Mutea el chat global"
+    usage: "/mutechat [segundos] [motivo]"
+  unmutechat:
+    description: "Desmutea el chat global"
+    usage: "/unmutechat"
+  mutelist:
+    description: "Muestra el estado del mute global"
+    usage: "/mutelist"
+  blockcmds:
+    description: "Bloquea comandos para jugadores"
+    usage: "/blockcmds"
+  ec:
+    description: "Abre el enderchest"
+    usage: "/ec [jugador]"
+  enderchest:
+    description: "Abre el enderchest"
+    usage: "/enderchest [jugador]"
+  near:
+    description: "Muestra jugadores cercanos"
+    usage: "/near"
+  whois:
+    description: "Muestra información de un jugador"
+    usage: "/whois <jugador>"
+  nick:
+    description: "Cambia el nick"
+    usage: "/nick <nuevo-nick> [jugador]"
+  iname:
+    description: "Cambia el nombre del item en mano"
+    usage: "/iname <nuevo-nombre>"
+  ilore:
+    description: "Cambia el lore del item en mano"
+    usage: "/ilore <set|add> <lore>"
   setspawn:
-    description: "Establece la ubicación del spawn"
+    description: "Establece el punto de aparición del servidor"
     usage: "/setspawn"
-    permission: monoxi.teleports.setspawn
   spawn:
     description: "Teletransporta al jugador al spawn"
     usage: "/spawn"
-    permission: monoxi.teleports.spawn
   spawnall:
     description: "Teletransporta a todos los jugadores al spawn"
     usage: "/spawnall"
-    permission: monoxi.teleports.spawnall
+  gamerulegui:
+    description: "Abre el menú de gamerules"
+    usage: "/gamerulegui"
+  me:
+    description: "Comando principal para MonoxiEssentials (incluye reload)"
+    usage: "/me reload"
+  tph:
+    description: "Teletransporta a un jugador hacia ti"
+    usage: "/tph <jugador>"
+  tphere:
+    description: "Alias de /tph"
+    usage: "/tphere <jugador>"
+  tpo:
+    description: "Te teletransporta a la última posición de un jugador (aunque esté offline)"
+    usage: "/tpo <jugador>"
 
 permissions:
   monoxi.teleports.tpall:
     description: "Permite usar el comando tpall"
-    default: true
+    default: op
   monoxi.teleports.warp:
     description: "Permite usar el comando warp"
-    default: true
+    default: op
   monoxi.teleports.warpall:
     description: "Permite usar el comando warpall"
-    default: true
+    default: op
   monoxi.teleports.back:
     description: "Permite usar el comando back"
-    default: true
+    default: op
   monoxi.teleports.setwarp:
     description: "Permite usar el comando setwarp"
     default: op
@@ -73,7 +152,7 @@ permissions:
     default: op
   monoxi.teleports.warps:
     description: "Permite usar el comando warps"
-    default: true
+    default: op
   monoxi.teleports.reload:
     description: "Permite recargar la configuración del plugin"
     default: op
@@ -82,7 +161,76 @@ permissions:
     default: op
   monoxi.teleports.spawn:
     description: "Permite usar el comando spawn"
-    default: true
+    default: op
   monoxi.teleports.spawnall:
     description: "Permite usar el comando spawnall"
+    default: op
+  monoxi.teleports.feed:
+    description: "Permite usar el comando feed"
+    default: op
+  monoxi.teleports.gamemode:
+    description: "Permite usar el comando gamemode"
+    default: op
+  monoxi.teleports.fly:
+    description: "Permite usar el comando fly"
+    default: op
+  monoxi.teleports.flyspeed:
+    description: "Permite usar el comando flyspeed"
+    default: op
+  monoxi.teleports.god:
+    description: "Permite usar el comando god"
+    default: op
+  monoxi.teleports.day:
+    description: "Permite usar el comando day"
+    default: op
+  monoxi.teleports.night:
+    description: "Permite usar el comando night"
+    default: op
+  monoxi.teleports.weather:
+    description: "Permite usar el comando weather"
+    default: op
+  monoxi.teleports.speed:
+    description: "Permite usar el comando speed"
+    default: op
+  monoxi.teleports.tp:
+    description: "Permite usar el comando tp"
+    default: op
+  monoxi.teleports.hat:
+    description: "Permite usar el comando hat"
+    default: op
+  monoxi.teleports.sudo:
+    description: "Permite usar el comando sudo"
+    default: op
+  monoxi.teleports.vanish:
+    description: "Permite usar el comando vanish"
+    default: op
+  monoxi.teleports.mutechat:
+    description: "Permite usar el comando mutechat"
+    default: op
+  monoxi.teleports.blockcmds:
+    description: "Permite usar el comando blockcmds"
+    default: op
+  monoxi.teleports.ec:
+    description: "Permite usar el comando ec/enderchest"
+    default: op
+  monoxi.teleports.near:
+    description: "Permite usar el comando near"
+    default: op
+  monoxi.teleports.whois:
+    description: "Permite usar el comando whois"
+    default: op
+  monoxi.teleports.nick:
+    description: "Permite usar el comando nick"
+    default: op
+  monoxi.teleports.gamerulegui:
+    description: "Permite usar el comando gamerulegui"
+    default: op
+  monoxi.teleports.tph:
+    description: "Permite usar el comando tph"
+    default: op
+  monoxi.teleports.tphere:
+    description: "Permite usar el comando tphere"
+    default: op
+  monoxi.teleports.tpo:
+    description: "Permite usar el comando tpo"
     default: op

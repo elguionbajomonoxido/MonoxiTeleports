@@ -1,11 +1,8 @@
-package mt.monoxido;
-
-import net.kyori.adventure.text.format.NamedTextColor;
+package me.monoxido;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -15,7 +12,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public final class MonoxiTeleports extends JavaPlugin implements Listener {
+public final class MonoxiEssentials extends JavaPlugin implements Listener {
 
     public String version;
     private WarpManager warpManager;
@@ -24,10 +21,10 @@ public final class MonoxiTeleports extends JavaPlugin implements Listener {
     private String prefix;
     private Location spawnLocation;
 
-    public MonoxiTeleports() {
+    public MonoxiEssentials() {
         // Hardcode the version or use another method to set the version
-        this.version = "0.4"; // Example of hardcoding the version
-        this.prefix = ChatColor.GOLD + "[" + ChatColor.YELLOW + "MonoxiTeleports" + ChatColor.GOLD + "] " + ChatColor.WHITE;
+        this.version = "0.5"; // Example of hardcoding the version
+        this.prefix = ChatColor.GOLD + "[" + ChatColor.YELLOW + "MonoxiEssentials" + ChatColor.GOLD + "] " + ChatColor.WHITE;
     }
 
     @Override
@@ -50,6 +47,10 @@ public final class MonoxiTeleports extends JavaPlugin implements Listener {
 
         // Registrar eventos y comandos
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new MuteChatListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockCmdsListener(), this);
+        // Registrar el listener de menús personalizados
+        Bukkit.getPluginManager().registerEvents(new MenuListener(), this);
         getCommand("setspawn").setExecutor(new SetSpawnCommand());
         getCommand("spawn").setExecutor(new SpawnCommand());
         getCommand("spawnall").setExecutor(new SpawnAllCommand());
@@ -61,7 +62,7 @@ public final class MonoxiTeleports extends JavaPlugin implements Listener {
         new CommandHandler(this, warpManager, teleportManager);
 
         // Mensaje de inicio
-        Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GOLD + "=== " + ChatColor.YELLOW + "MonoxiTeleports version: " + version + ChatColor.GOLD + " ===");
+        Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GOLD + "=== " + ChatColor.YELLOW + "MonoxiEssentials version: " + version + ChatColor.GOLD + " ===");
         Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GREEN + "Plugin activado correctamente");
         Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GREEN + "Desarrollado por Monoxido");
     }
@@ -91,7 +92,7 @@ public final class MonoxiTeleports extends JavaPlugin implements Listener {
      * Comando para recargar la configuración del plugin.
      */
     public void registerReloadCommand() {
-        getCommand("mtp").setExecutor((sender, command, label, args) -> {
+        getCommand("me").setExecutor((sender, command, label, args) -> {
             if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
                 reloadConfig();
                 teleportEffects = new TeleportEffects(this, getConfig());
