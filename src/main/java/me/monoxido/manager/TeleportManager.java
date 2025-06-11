@@ -1,4 +1,4 @@
-package me.monoxido;
+package me.monoxido.manager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

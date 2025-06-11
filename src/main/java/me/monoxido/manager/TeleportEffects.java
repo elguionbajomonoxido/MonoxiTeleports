@@ -1,6 +1,5 @@
-package me.monoxido;
+package me.monoxido.manager;
 
-import org.bukkit.Color;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Particle;

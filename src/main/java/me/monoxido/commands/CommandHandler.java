@@ -1,5 +1,10 @@
-package me.monoxido;
+package me.monoxido.commands;
 
+import me.monoxido.*;
+import me.monoxido.listener.BlockCmdsListener;
+import me.monoxido.listener.MuteChatListener;
+import me.monoxido.manager.TeleportManager;
+import me.monoxido.manager.WarpManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

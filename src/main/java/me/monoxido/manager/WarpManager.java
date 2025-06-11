@@ -1,5 +1,6 @@
-package me.monoxido;
+package me.monoxido.manager;
 
+import me.monoxido.MonoxiEssentials;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

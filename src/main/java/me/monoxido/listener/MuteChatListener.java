@@ -1,4 +1,4 @@
-package me.monoxido;
+package me.monoxido.listener;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,7 +1,9 @@
-package me.monoxido;
+package me.monoxido.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import me.monoxido.manager.WarpManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
